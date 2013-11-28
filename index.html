@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=7,IE=9, IE=10">
+<!-- Sets whether a web application runs in full-screen mode. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<!-- Sets the style of the status bar for a web application. -->
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Mobile Gallery</title>
+
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.css" />
+<link rel="stylesheet" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.5/js/esri/css/esri.css" />
+
+<style type="text/css">
+	 html, body
+      {
+        height: 100%;
+        margin: 0px;
+        padding: 0px;
+        width: 100%;
+      }
+	  #mapcontent, #map { width: 100%; height: 100%; padding: 0; position: absolute; z-index: 0;}
+    </style>
+
+
+
+<script src="http://code.jquery.com/jquery-1.9.0.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.js"></script>
+<script src="http://serverapi.arcgisonline.com/jsapi/arcgis/3.5compact/"></script>
+
+<script>
+  dojo.require("esri.map");
+  dojo.require("esri.layers.ArcGISDynamicMapServiceLayer");
+  dojo.require("esri.layers.ArcGISTiledMapServiceLayer");
+
+  var featureLayerC;
+  var featureLayerB;
+  var featureLayerA;
+  
+  		  
+  
+    var map;
+   function init() {
+    var customExtentAndSR = new esri.geometry.Extent(288800,5240000,348000,5295000,new esri.SpatialReference({"wkid":32181}));
+		var map = new esri.Map("map",{
+			extent:customExtentAndSR,
+			zoom: 1
+		} );
+		  
+		//var agoServiceURL = "http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_StreetMap_World_2D/MapServer";
+		var agoServiceURL = "http://map.stjohns.ca/Arcgis/rest/services/MapCentre/STJ_Basemap_Topo_MapService/MapServer";
+		var agoLayer = new esri.layers.ArcGISTiledMapServiceLayer(agoServiceURL);
+		map.addLayer(agoLayer);
+    
+    featureLayerC = new esri.layers.ArcGISTiledMapServiceLayer("http://map.stjohns.ca/ArcGIS/rest/services/MapCentre/STJ_MC_Ortho_2013_MapService/MapServer",
+    {
+    visible:false}
+    
+    );
+	
+	featureLayerB = new esri.layers.ArcGISDynamicMapServiceLayer("http://gistestsrv2/gistestsrv2/rest/services/MapCentre/STJ_Sewer_Map/MapServer",
+    {
+    visible:false}
+    
+    );
+    
+    featureLayerA = new esri.layers.ArcGISDynamicMapServiceLayer("http://map.stjohns.ca/Arcgis/rest/services/MapCentre/STJ_MC_CityBounds_MapService/MapServer",
+    {
+    visible:false}
+    
+    );
+    
+	map.addLayer(featureLayerC)
+    map.addLayer(featureLayerB)
+    map.addLayer(featureLayerA)
+  }
+   
+  
+ function updateLayerVisibility() {
+	 var isChecked = $('#checkbox-v-2a').is(':checked');
+	 if(isChecked == true){
+	 featureLayerB.show()
+	 }
+	 else{
+	 featureLayerB.hide()
+	 };
+        
+      }
+      
+function updateLayerVisibility_1() {
+	 var isChecked = $('#checkbox-v-2b').is(':checked');
+	 if(isChecked == true){
+	 featureLayerA.show()
+	 }
+	 else{
+	 featureLayerA.hide()
+	 };
+	  }
+	 
+	 function updateLayerVisibility_2() {
+	 var isChecked = $('#checkbox-v-2c').is(':checked');
+	 if(isChecked == true){
+	 featureLayerC.show()
+	 }
+	 else{
+	 featureLayerC.hide()
+	 };
+        
+      }
+
+
+  dojo.ready(init);
+</script>
+</head>
+
+<body>
+<!-- home view -->
+<div data-role="page" id="home">
+  <!-- header -->
+  <div data-theme="a" data-role="header" data-position="fixed">
+  <a href="#toc" data-role="button" data-icon="bars" data-iconpos="notext"></a>
+    <h3>Viewer</h3>
+  </div>
+
+  <!-- content -->
+  <div data-role="content" id="mapcontent">
+    <div id="map"></div>
+  </div>
+  
+</div>
+
+<!-- layer view -->
+<div data-role="page" id="toc">
+  <!-- header -->
+  <div data-theme="a" data-role="header" data-position="fixed">
+  <a href="#home" data-role="button" data-icon="back" data-iconpos="notext"></a>
+    <h3>Manage layers</h3>
+  </div>
+
+  <!-- content -->
+  <div data-role="content">
+    <form>
+    <fieldset data-role="controlgroup">
+        <legend>Vertical:</legend>
+        <input type="checkbox" name="checkbox-v-2a" id="checkbox-v-2a" onClick="updateLayerVisibility()">
+        <label for="checkbox-v-2a">Sewer network</label>
+        <input type="checkbox" name="checkbox-v-2b" id="checkbox-v-2b" onClick="updateLayerVisibility_1()">
+        <label for="checkbox-v-2b">Municipal Boundary</label>
+		<input type="checkbox" name="checkbox-v-2c" id="checkbox-v-2c" onClick="updateLayerVisibility_2()">
+        <label for="checkbox-v-2c">Imagery</label>
+    </fieldset>
+</form>
+  </div>
+  
+</div>
+
+</body>
+</html>
